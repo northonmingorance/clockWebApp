@@ -68,19 +68,19 @@
       const hourThinLength = maxHandLength * 0.5;
       const minuteThinLength = maxHandLength * 0.75;
 
-      drawHand(centerX, centerY, hourAngle, hourThinLength, 'white', 5); // Hour hand thin
-      drawHand(centerX, centerY, minuteAngle, minuteThinLength, 'white', 5); // Minute hand thin
+      drawHand(centerX, centerY, hourAngle, hourThinLength, 'white', maxHandLength / 160); // Hour hand thin
+      drawHand(centerX, centerY, minuteAngle, minuteThinLength, 'white', maxHandLength / 160); // Minute hand thin
 
       // Draw thick hands starting at the end of thin hands
       const hourThickLength = -maxHandLength * 0.4; // Length for the thick part of the hour hand
       const minuteThickLength = -maxHandLength * 0.65; // Length for the thick part of the minute hand
 
-      drawHand(centerX, centerY, hourAngle, hourThickLength, 'white', 20, hourThinLength); // Hour hand thick
-      drawHand(centerX, centerY, minuteAngle, minuteThickLength, 'white', 20, minuteThinLength); // Minute hand thick
+      drawHand(centerX, centerY, hourAngle, hourThickLength, 'white', maxHandLength / 40, hourThinLength); // Hour hand thick
+      drawHand(centerX, centerY, minuteAngle, minuteThickLength, 'white', maxHandLength / 40, minuteThinLength); // Minute hand thick
 
       drawWhiteCircle(centerX, centerY, 15); // Adjust the size of the circle as needed
-      drawHand(centerX, centerY, secondAngle, maxHandLength * 0.8, 'red', 5); // Second hand
-      drawHand(centerX, centerY, secondAngle + 180, maxHandLength * 0.085, 'red', 5); // Second hand
+      drawHand(centerX, centerY, secondAngle, maxHandLength * 0.8, 'red', maxHandLength / 160); // Second hand
+      drawHand(centerX, centerY, secondAngle + 180, maxHandLength * 0.085, 'red', maxHandLength / 160); // Second hand
 
       // Draw the center circle
       drawRedCircle(centerX, centerY, 7); // Adjust the size of the circle as needed
