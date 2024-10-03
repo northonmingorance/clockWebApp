@@ -44,9 +44,9 @@
 
       // Draw the radial lines (hour marks)
       drawRectangle(1);
-      drawRadialLines(60, 3);
+      drawRadialLines(60, Math.min(canvas.width, canvas.height) / 320);
       drawRectangle(0.9);
-      drawRadialLines(12, 12);
+      drawRadialLines(12, Math.min(canvas.width, canvas.height) / 80);
       drawRectangle(0.8);
 
       // Draw the clock marks (12, 3, 6, 9) at the edges
@@ -148,13 +148,13 @@
       ctx.fillText('12', centerX, margin - margin / 24);
 
       // Draw 3 o'clock
-      ctx.fillText('3', canvas.width - margin - margin / 5, centerY + margin / 6);
+      ctx.fillText('3', canvas.width - margin - margin / 4, centerY + margin / 6);
 
       // Draw 6 o'clock
       ctx.fillText('6', centerX, canvas.height - margin + margin / 3);
 
       // Draw 9 o'clock
-      ctx.fillText('9', margin + margin / 5, centerY + margin / 6);
+      ctx.fillText('9', margin + margin / 4, centerY + margin / 6);
 
 
       ctx.font = margin / 5 + "px monospace";
