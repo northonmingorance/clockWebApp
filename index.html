@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analog Clock with Hour Marks</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: black;
+    }
+
+    canvas {
+      display: block;
+      background-color: black;
+    }
+  </style>
+</head>
+<body onclick="toggleFullScreen()">
+  <canvas id="clockCanvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById('clockCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      drawClock(); // Redraw the clock after resizing
+    }
+
+    function drawClock() {
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+
+      // Draw the radial lines (hour marks)
+      drawRectangle(1);
+      drawRadialLines(60, 3);
+      drawRectangle(0.9);
+      drawRadialLines(12, 12);
+      drawRectangle(0.8);
+
+      // Draw the clock marks (12, 3, 6, 9) at the edges
+      drawClockFace(centerX, centerY);
+
+      // Draw the hands
+      const now = new Date();
+      const maxHandLength = Math.min(canvas.width, canvas.height) / 1.75;
+
+      const milliseconds = now.getMilliseconds();
+      const seconds = now.getSeconds() + milliseconds / 1000;
+      const minutes = now.getMinutes() + seconds / 60;
+      const hours = now.getHours() % 12 + minutes / 60;
+
+      // Draw thin hands
+      const hourAngle = hours / 12 * 360 - 90;
+      const minuteAngle = minutes / 60 * 360 - 90;
+      const secondAngle = seconds / 60 * 360 - 90;
+      const hourThinLength = maxHandLength * 0.5;
+      const minuteThinLength = maxHandLength * 0.75;
+
+      drawHand(centerX, centerY, hourAngle, hourThinLength, 'white', 5); // Hour hand thin
+      drawHand(centerX, centerY, minuteAngle, minuteThinLength, 'white', 5); // Minute hand thin
+
+      // Draw thick hands starting at the end of thin hands
+      const hourThickLength = -maxHandLength * 0.4; // Length for the thick part of the hour hand
+      const minuteThickLength = -maxHandLength * 0.65; // Length for the thick part of the minute hand
+
+      drawHand(centerX, centerY, hourAngle, hourThickLength, 'white', 20, hourThinLength); // Hour hand thick
+      drawHand(centerX, centerY, minuteAngle, minuteThickLength, 'white', 20, minuteThinLength); // Minute hand thick
+
+      drawWhiteCircle(centerX, centerY, 15); // Adjust the size of the circle as needed
+      drawHand(centerX, centerY, secondAngle, maxHandLength * 0.8, 'red', 5); // Second hand
+      drawHand(centerX, centerY, secondAngle + 180, maxHandLength * 0.085, 'red', 5); // Second hand
+
+      // Draw the center circle
+      drawRedCircle(centerX, centerY, 7); // Adjust the size of the circle as needed
+    }
+
+    function drawRadialLines(lines, weight) {
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const radius = Math.sqrt(centerX ** 2 + centerY ** 2);
+
+      for (let i = 0; i < lines; i++) {
+        const angle = (i * 2 * Math.PI) / lines; // Calculate angle in radians
+        const x = centerX + radius * Math.cos(angle); // X coordinate of line endpoint
+        const y = centerY + radius * Math.sin(angle); // Y coordinate of line endpoint
+
+        ctx.beginPath(); // Start a new path
+        ctx.moveTo(centerX, centerY); // Move to the center
+        ctx.lineTo(x, y); // Draw line to the edge
+        ctx.lineWidth = weight;
+        ctx.strokeStyle = 'grey'; // Set line color
+        ctx.stroke(); // Render the line
+      }
+    }
+
+    function drawRectangle(size) {
+      const rectWidth = canvas.width * size; // Rectangle width
+      const rectHeight = canvas.height * size; // Rectangle height
+      const rectX = (canvas.width - rectWidth) / 2; // X position to center the rectangle
+      const rectY = (canvas.height - rectHeight) / 2; // Y position to center the rectangle
+
+      ctx.fillStyle = 'black'; // Set fill color to black
+      ctx.fillRect(rectX, rectY, rectWidth, rectHeight); // Draw the rectangle
+    }
+
+    function drawWhiteCircle(centerX, centerY, radius) {
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+
+    function drawRedCircle(centerX, centerY, radius) {
+      ctx.fillStyle = 'white';
+      ctx.strokeStyle = 'red';
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    function drawClockFace(centerX, centerY) {
+      const margin = Math.min(canvas.width, canvas.height) / 5; // Distance from the edge of the window for the marks
+      const now = new Date();
+
+      // Get month abbreviation, year, weekday abbreviation, and day of the month
+      const monthAbbr = now.toLocaleString('default', { month: 'short' }).toUpperCase();
+      const year = now.getFullYear();
+      const weekdayAbbr = now.toLocaleString('default', { weekday: 'short' }).toUpperCase();
+      const dayOfMonth = now.getDate();
+
+      // Draw 12 o'clock
+      ctx.font = "bold " + margin / 2.5 + "px monospace";
+      ctx.fillStyle = 'white';
+      ctx.textAlign = 'center';
+      ctx.fillText('12', centerX, margin - margin / 24);
+
+      // Draw 3 o'clock
+      ctx.fillText('3', canvas.width - margin - margin / 5, centerY + margin / 6);
+
+      // Draw 6 o'clock
+      ctx.fillText('6', centerX, canvas.height - margin + margin / 3);
+
+      // Draw 9 o'clock
+      ctx.fillText('9', margin + margin / 5, centerY + margin / 6);
+
+
+      ctx.font = margin / 5 + "px monospace";
+      // Draw month abbreviation (in red) and year (in white) between 9 and the center
+      ctx.fillStyle = 'red';
+      ctx.fillText(monthAbbr, margin * 2, centerY + margin / 12);
+      ctx.fillStyle = 'white';
+      ctx.fillText(year, margin * 2.5, centerY + margin / 12);
+
+      // Draw weekday abbreviation (in red) and day of month (in white) between center and 3
+      ctx.fillStyle = 'red';
+      ctx.fillText(weekdayAbbr, canvas.width - margin * 2.35, centerY + margin / 12);
+      ctx.fillStyle = 'white';
+      ctx.fillText(dayOfMonth, canvas.width - margin * 2, centerY + margin / 12);
+    }
+
+    function drawHand(centerX, centerY, angleDeg, length, color, width, offsetLength = 0) {
+      const angleRad = angleDeg * Math.PI / 180;
+      const handX = centerX + Math.cos(angleRad) * (length + offsetLength);
+      const handY = centerY + Math.sin(angleRad) * (length + offsetLength);
+
+      ctx.lineWidth = width;
+      ctx.strokeStyle = color;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(centerX + Math.cos(angleRad) * offsetLength, centerY + Math.sin(angleRad) * offsetLength); // Start from the end of the thin hand
+      ctx.lineTo(handX, handY);
+      ctx.stroke();
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function updateClock() {
+      drawClock();
+      requestAnimationFrame(updateClock); // Continuously update
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas(); // Set the canvas size based on window
+    updateClock(); // Start updating the clock
+
+    toggleFullScreen(); // Enter fullscreen on load
+  </script>
+</body>
+</html>
